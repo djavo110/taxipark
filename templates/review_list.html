@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Haydovchi Sharhlari</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-image: url('https://images.unsplash.com/photo-1600180758890-6b94519aaf62?auto=format&fit=crop&w=1740&q=80');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      min-height: 100vh;
+      padding-top: 70px;
+    }
+
+    .navbar {
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .review-card {
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    h2 {
+      color: white;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+      text-align: center;
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">TaxiPark</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+              data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+              aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>📝 Haydovchi Sharhlari</h2>
+    {% for review in reviews %}
+    <div class="review-card">
+      <h5>👤 Mijoz: <strong>{{ review.customer.full_name }}</strong></h5>
+      <h6>🚗 Haydovchi: <strong>{{ review.driver.full_name }}</strong></h6>
+      <p>⭐ Baho: {{ review.rating }}</p>
+      <p><em>{{ review.comment }}</em></p>
+      <p class="text-muted">🕒 {{ review.created_at }}</p>
+    </div>
+    {% empty %}
+      <div class="review-card">
+        <p>Hech qanday sharh mavjud emas.</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -5,7 +5,7 @@ from .forms import *
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.models import User
-from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 class IndexView(ListView):
@@ -45,7 +45,7 @@ class PaymentListView(ListView):
     template_name = 'payment_list.html'
     context_object_name = 'payments'
     def get_queryset(self):
-        return super().get_queryset().select_related('user')
+        return super().get_queryset().select_related('user').all()
     
 class ReviewCreateView(CreateView):
     model = DriverReviews
@@ -69,55 +69,36 @@ class DealListView(ListView):
         return Deal.objects.select_related('customer', 'car').all()
     
 
-class DealCreateView(CreateView):
-    model  = Deal
-    form_class = DealForm
-    template_name = 'deal_form.html'
-    success_url = reverse_lazy('deal_list')
-
-    def form_valid(self, form):
-        user_email = self.request.POST.get('email')
-        try:
-            user = Users.objects.get(email=user_email)
-        except Users.DoesNotExist:
-            messages.error(self.request, "Bunday foydalanuvchi topilmadi.")
-            return redirect('deal_list')
-
+def deal_create(request):
+    print("funksiya ishlashni boshladi")
+    if request.method == 'POST':
+        form = DealForm(request.POST)
+        print("forma yaratildi")
+        print(form.is_valid())
         if form.is_valid():
-            deal = form.save(commit=False)
-            deal.customer = user
+            print("forma valid")
+            deal = form.save()
+            print("saqlandi")
+            deal.status = 'active'  # boshlang‘ich holat
             deal.save()
-            return redirect('pay_for_ride', deal_id=deal.id)
-        else:
-            return self.form_invalid(form)
+            return redirect('deal_create')  # qayta ro'yxat ko'rsatadi
+    else:
+        form = DealForm()
 
+    deals = Deal.objects.all()
+    return render(request, 'deal_form.html', {'form': form, 'deals': deals})
 
-
-# @login_required
 def mark_arrived(request, deal_id):
-    deal = get_object_or_404(Deal, id=deal_id, driver=request.user)
+    deal = get_object_or_404(Deal, id=deal_id)
     deal.status = 'arrived'
     deal.save()
-    return redirect('deal_detail', deal_id=deal.id)
+    return redirect('deal_create')
 
-# @login_required
 def pay_for_ride(request, deal_id):
-    deal = get_object_or_404(Deal, id=deal_id, customer=request.user)
-
-    if deal.status != 'arrived':
-        return HttpResponse("🚫 Siz hali manzilga yetib bormagansiz!")
-
-    # Balansdan yechish (agar bor bo‘lsa)
-    if request.user.balance < deal.price:
-        return HttpResponse("❌ Mablag' yetarli emas!")
-
-    request.user.balance -= deal.price
-    request.user.save()
-
-    deal.status = 'paid'
+    deal = get_object_or_404(Deal, id=deal_id)
+    deal.status = 'completed'
     deal.save()
-
-    return redirect('deal_detail', deal_id=deal.id)
+    return redirect('deal_create')
 
 class UserCreateView(CreateView):
     model  = Users

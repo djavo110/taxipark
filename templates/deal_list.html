@@ -69,62 +69,39 @@
       <h1>📜 Shartnoma Ro'yxati</h1>
 
       <div class="row">
-        {% for deal in deals %}
-        <div class="col-md-4 mb-3">
-          <div class="card shadow-sm h-100">
-            <div class="card-body">
-              <h5 class="card-title">Deal ID: {{ deal.id }}</h5>
-              <p class="card-text">
-                <strong>Customer:</strong> {{ deal.customer.full_name }}
-              </p>
-              <p class="card-text"><strong>Car:</strong> {{ deal.car.name }}</p>
-              <p class="card-text price">
-                <strong>Price:</strong> {{ deal.total_price }} UZS
-              </p>
-              <p class="card-text">
-                <strong>Status:</strong>
-                <span
-                  class="status {% if deal.status == 'Active' %}active{% else %}inactive{% endif %}"
-                >
-                  {{ deal.status }}
-                </span>
-              </p>
-              <p class="card-text">
-                <strong>Date:</strong> {{ deal.created_at }}
-              </p>
-            </div>
-          </div>
-
-          <div class="action-buttons mt-2">
-            {% if deal.status == 'created' and deal.driver and deal.driver.user
-            and user == deal.driver.user %}
-            <!-- Haydovchi uchun: Yetib bordim tugmasi -->
-            <form method="post" action="{% url 'mark_arrived' deal.id %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-success w-100">
-                📍 Yetib bordim
-              </button>
-            </form>
-              {% for deal in deals %}
-                  {{ deal.customer }}
-              {% empty %}
-                  Hozircha shartnoma yo'q
-              {% endfor %}
-
-            <!-- Mijoz uchun: To'lov tugmasi -->
-            <form method="post" action="{% url 'pay_for_ride' deal.id %}">
-              {% csrf_token %}
-              <button type="submit" class="btn btn-warning w-100">
-                💳 To'lovni amalga oshirish
-              </button>
-            </form>
-          </div>
-        </div>
-        {% empty %}
-        <p class="text-center text-muted">Hozircha shartnomalar yo‘q.</p>
-        {% endfor %}
+          {% for deal in deals %}
+              <div class="col-md-4 mb-3">
+                <div class="card shadow-sm h-100">
+                  <div class="card-body">
+                    <h5 class="card-title">Deal ID: {{ deal.id }}</h5>
+                    <p class="card-text">
+                      <strong>Customer:</strong> {{ deal.customer.full_name }}
+                    </p>
+                    <p class="card-text"><strong>Car:</strong> {{ deal.car.name }}</p>
+                    <p class="card-text price">
+                      <strong>Price:</strong> {{ deal.total_price }} UZS
+                    </p>
+                    <p class="card-text">
+                      <strong>Status:</strong>
+                      <span
+                        class="status {% if deal.status == 'Active' %}active{% else %}inactive{% endif %}"
+                      >
+                        {{ deal.status }}
+                      </span>
+                    </p>
+                    <p class="card-text">
+                      <strong>Date:</strong> {{ deal.created_at }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+          {% empty %}
+              <p>Hozircha shartnoma mavjud emas.</p>
+          {% endfor %}
       </div>
-    </div>
+
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
   </body>
